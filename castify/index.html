@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Castify — Compliance Training, Reimagined</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060608;
+      --surface: #0F0F12;
+      --surface2: #161619;
+      --border: #222226;
+      --accent: #C8820E;
+      --accent-glow: rgba(200,130,14,0.22);
+      --accent-dim: rgba(200,130,14,0.08);
+      --text: #EDE8DC;
+      --text-muted: #6B6870;
+      --text-dim: #333337;
+      --success: #34D399;
+      --success-glow: rgba(52,211,153,0.14);
+      --danger: #F87171;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --radius: 8px;
+      --radius-lg: 16px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+
+    /* Subtle grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ---- SCREENS ---- */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ---- SHARED ---- */
+    .logo { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+    .logo span { color: var(--accent); }
+
+    .btn-primary {
+      background: var(--accent); color: #000; border: none;
+      padding: 14px 32px; border-radius: var(--radius);
+      font-family: var(--font-body); font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
+    }
+    .btn-primary:hover { background: #E09212; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,130,14,0.3); }
+
+    .btn-ghost {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border); padding: 10px 20px;
+      border-radius: var(--radius); font-family: var(--font-body);
+      font-size: 13px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ====================================================
+       SCREEN 0: UPLOAD
+    ==================================================== */
+    #screen-upload { align-items: center; justify-content: center; padding: 40px 20px; position: relative; }
+
+    .upload-glow {
+      position: absolute; width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(200,130,14,0.05) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .upload-container { width: 100%; max-width: 580px; position: relative; z-index: 1; }
+
+    .upload-header { text-align: center; margin-bottom: 44px; }
+    .upload-header .logo { font-size: 38px; margin-bottom: 12px; display: block; }
+    .upload-tagline { font-size: 14px; color: var(--text-muted); font-weight: 300; letter-spacing: 0.4px; }
+
+    .upload-section { margin-bottom: 22px; }
+    .upload-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: block; }
+
+    .upload-zone {
+      border: 1.5px dashed var(--border); border-radius: var(--radius-lg);
+      padding: 24px; display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: all 0.25s; background: var(--surface); position: relative; overflow: hidden;
+    }
+    .upload-zone:hover { border-color: var(--accent); background: var(--accent-dim); }
+    .upload-zone.filled { border-style: solid; border-color: var(--accent); background: var(--accent-dim); }
+
+    .upload-icon { width: 44px; height: 44px; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+    .upload-text-group { flex: 1; }
+    .upload-text-main { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .upload-text-sub { font-size: 12px; color: var(--text-muted); }
+    .upload-status { font-size: 13px; font-weight: 500; color: var(--accent); }
+
+    /* Photo zone */
+    .upload-zone.photo-zone { align-items: flex-start; gap: 20px; }
+    .employee-preview { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); flex-shrink: 0; }
+    .employee-preview-placeholder { width: 72px; height: 72px; border-radius: 50%; background: var(--surface2); border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+
+    /* Voice selector */
+    .voice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .voice-pill {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 16px 12px;
+      cursor: pointer; transition: all 0.2s; text-align: center; position: relative;
+    }
+    .voice-pill:hover { border-color: var(--accent); }
+    .voice-pill.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .voice-pill.selected::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius); box-shadow: 0 0 22px var(--accent-glow); pointer-events: none; }
+    .voice-pill-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .voice-pill-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+    .voice-pill-badge { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: var(--accent-dim); color: var(--accent); margin-top: 8px; }
+
+    .upload-cta { margin-top: 32px; }
+    .upload-cta .btn-primary { width: 100%; padding: 18px; font-size: 16px; border-radius: var(--radius-lg); }
+    .powered-by { margin-top: 14px; font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; text-align: center; }
+
+    /* ====================================================
+       SCREEN 1: PIPELINE
+    ==================================================== */
+    #screen-pipeline { align-items: center; justify-content: center; padding: 60px 20px; position: relative; }
+
+    .pipeline-glow { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(200,130,14,0.07) 0%, transparent 70%); pointer-events: none; }
+
+    .pipeline-container { width: 100%; max-width: 460px; position: relative; z-index: 1; }
+
+    .pipeline-header { text-align: center; margin-bottom: 52px; }
+    .pipeline-header .logo { font-size: 24px; margin-bottom: 24px; display: block; }
+    .pipeline-title { font-family: var(--font-display); font-size: 34px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .pipeline-subtitle { font-size: 13px; color: var(--text-muted); }
+
+    .pipeline-step {
+      display: flex; align-items: flex-start; gap: 20px;
+      opacity: 0; transform: translateX(-14px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .pipeline-step.visible { opacity: 1; transform: translateX(0); }
+
+    .step-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+
+    .step-node {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--surface2); border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; transition: all 0.3s; position: relative; z-index: 2;
+    }
+    .step-node.active {
+      border-color: var(--accent); background: var(--accent-dim);
+      box-shadow: 0 0 0 4px var(--accent-glow), 0 0 20px var(--accent-glow);
+      animation: pulse-node 1.5s ease-in-out infinite;
+    }
+    .step-node.done { border-color: var(--success); background: var(--success-glow); animation: none; box-shadow: none; }
+
+    @keyframes pulse-node {
+      0%, 100% { box-shadow: 0 0 0 4px var(--accent-glow), 0 0 20px var(--accent-glow); }
+      50% { box-shadow: 0 0 0 8px rgba(200,130,14,0.1), 0 0 32px rgba(200,130,14,0.3); }
+    }
+
+    .step-line { width: 2px; height: 44px; background: var(--border); position: relative; overflow: hidden; }
+    .step-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent); transition: height 0.6s ease; }
+    .step-line.filled::after { height: 100%; }
+
+    .step-content { flex: 1; padding-top: 6px; padding-bottom: 36px; }
+    .step-label { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; transition: color 0.3s; }
+    .step-label.active { color: var(--text); }
+    .step-label.done { color: var(--success); }
+    .step-detail { font-size: 12px; color: var(--text-dim); transition: color 0.3s; }
+    .step-detail.show { color: var(--text-muted); }
+
+    /* ====================================================
+       SCREEN 2: EPISODES
+    ==================================================== */
+    #screen-episodes { flex-direction: column; }
+
+    .episodes-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 40px; border-bottom: 1px solid var(--border);
+      background: rgba(6,6,8,0.92); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-actions { display: flex; gap: 12px; }
+
+    .episodes-hero {
+      padding: 60px 40px 40px;
+      background: linear-gradient(180deg, rgba(200,130,14,0.04) 0%, transparent 100%);
+    }
+
+    .series-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .series-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    .series-title { font-family: var(--font-display); font-size: 52px; font-weight: 600; line-height: 1.1; margin-bottom: 20px; }
+    .series-meta { display: flex; align-items: center; gap: 24px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
+
+    .episodes-section { padding: 40px; flex: 1; }
+    .section-heading { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; }
+
+    .episodes-rail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+    .episode-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;
+    }
+    .episode-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,130,14,0.2); }
+
+    .episode-thumb {
+      height: 160px; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ep1-thumb { background: linear-gradient(135deg, #0F1419, #1A2332); }
+    .ep2-thumb { background: linear-gradient(135deg, #0F1A14, #162314); }
+    .ep3-thumb { background: linear-gradient(135deg, #1A0F19, #261224); }
+
+    .episode-number-bg {
+      font-family: var(--font-display); font-size: 110px; font-weight: 600;
+      position: absolute; right: 12px; bottom: -24px; opacity: 0.07;
+      color: var(--text); line-height: 1; pointer-events: none; user-select: none;
+    }
+    .episode-icon { font-size: 38px; position: relative; z-index: 1; }
+
+    .play-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .episode-card:hover .play-overlay { opacity: 1; }
+    .play-btn-overlay { width: 50px; height: 50px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+    .episode-body { padding: 20px; }
+    .episode-num { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .episode-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+    .episode-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+    .episode-footer { display: flex; align-items: center; justify-content: space-between; }
+    .episode-duration { font-size: 12px; color: var(--text-dim); }
+    .episode-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.3px; }
+    .badge-new { background: var(--accent-dim); color: var(--accent); }
+    .badge-locked { background: var(--surface2); color: var(--text-dim); }
+
+    /* ====================================================
+       SCREEN 3: PLAYER
+    ==================================================== */
+    #screen-player { background: #000; }
+
+    .player-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px; position: absolute; top: 0; left: 0; right: 0; z-index: 50;
+      background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+    }
+    .player-back { display: flex; align-items: center; gap: 8px; font-size: 14px; color: rgba(255,255,255,0.65); cursor: pointer; background: none; border: none; font-family: var(--font-body); transition: color 0.2s; }
+    .player-back:hover { color: #fff; }
+
+    .player-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; min-height: 100vh; }
+
+    #castify-video { width: 100%; max-height: 100vh; display: block; }
+
+    .player-controls {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 20px 32px 28px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+    }
+    .progress-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; cursor: pointer; margin-bottom: 14px; }
+    .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width 0.1s linear; pointer-events: none; }
+
+    .controls-row { display: flex; align-items: center; justify-content: space-between; }
+    .controls-left { display: flex; align-items: center; gap: 16px; }
+    .ctrl-btn { background: none; border: none; color: #fff; cursor: pointer; font-size: 20px; padding: 4px; opacity: 0.75; transition: opacity 0.2s; }
+    .ctrl-btn:hover { opacity: 1; }
+    .time-display { font-size: 13px; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
+    .ep-title-display { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.75); }
+
+    /* Quiz Modal */
+    .quiz-modal {
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; align-items: flex-end; justify-content: center;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .quiz-modal.visible { opacity: 1; pointer-events: all; }
+
+    .quiz-card {
+      background: var(--surface); border: 1px solid var(--border); border-bottom: none;
+      border-radius: 24px 24px 0 0; padding: 32px; width: 100%; max-width: 680px;
+      transform: translateY(100%); transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .quiz-modal.visible .quiz-card { transform: translateY(0); }
+
+    .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .quiz-tag { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); }
+    .quiz-timer { display: flex; align-items: center; gap: 10px; }
+    .timer-ring { width: 40px; height: 40px; }
+    .timer-num { font-size: 22px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+
+    .quiz-question { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 24px; }
+
+    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+    .quiz-option {
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 16px; cursor: pointer;
+      font-size: 14px; font-weight: 500; color: var(--text); text-align: left;
+      transition: all 0.2s; font-family: var(--font-body);
+    }
+    .quiz-option:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-dim); }
+    .quiz-option.correct { border-color: var(--success); background: var(--success-glow); color: var(--success); }
+    .quiz-option.wrong { border-color: var(--danger); background: rgba(248,113,113,0.08); color: var(--danger); opacity: 0.6; }
+
+    .quiz-result { text-align: center; padding: 12px 0; display: none; }
+    .quiz-result.show { display: block; }
+    .result-icon { font-size: 52px; margin-bottom: 12px; }
+    .result-title { font-family: var(--font-display); font-size: 30px; font-weight: 600; margin-bottom: 8px; }
+    .result-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+
+    /* ====================================================
+       ANALYTICS OVERLAY
+    ==================================================== */
+    #analytics-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(10px); z-index: 300;
+      display: none; align-items: center; justify-content: center; padding: 40px;
+    }
+    #analytics-overlay.visible { display: flex; }
+
+    .analytics-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; width: 100%; max-width: 860px;
+      max-height: 86vh; overflow-y: auto; padding: 36px;
+    }
+
+    .analytics-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .analytics-title { font-family: var(--font-display); font-size: 30px; font-weight: 600; }
+    .close-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
+    .close-btn:hover { color: var(--text); border-color: var(--text-muted); }
+
+    .analytics-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .stat-value { font-size: 30px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .stat-label { font-size: 12px; color: var(--text-muted); }
+    .c-accent { color: var(--accent); }
+    .c-success { color: var(--success); }
+    .c-danger { color: var(--danger); }
+
+    .a-section-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+
+    .analytics-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+    .analytics-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 0 16px 12px 0; border-bottom: 1px solid var(--border); }
+    .analytics-table td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+
+    .prog-cell { display: flex; align-items: center; gap: 10px; }
+    .prog-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+    .prog-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+    .prog-fill.green { background: var(--success); }
+    .prog-pct { font-size: 12px; color: var(--text-muted); width: 34px; }
+
+    .status-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .s-complete { background: var(--success-glow); color: var(--success); }
+    .s-progress { background: var(--accent-dim); color: var(--accent); }
+    .s-none { background: rgba(248,113,113,0.1); color: var(--danger); }
+
+    .remind-btn { font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: none; color: var(--text-muted); transition: all 0.2s; font-family: var(--font-body); }
+    .remind-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .remind-btn.sent { border-color: var(--success); color: var(--success); pointer-events: none; }
+
+    .chart-row { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+    .chart-label { font-size: 12px; color: var(--text-muted); width: 200px; flex-shrink: 0; }
+    .chart-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+    .chart-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+    .chart-val { font-size: 12px; color: var(--text); width: 34px; text-align: right; flex-shrink: 0; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 32px; right: 32px; background: var(--surface); border: 1px solid var(--success); border-radius: 10px; padding: 14px 20px; font-size: 13px; color: var(--success); z-index: 9998; transform: translateY(20px); opacity: 0; transition: all 0.3s; pointer-events: none; }
+    .toast.visible { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== SCREEN 0: UPLOAD ==================== -->
+<div class="screen active" id="screen-upload">
+  <div class="upload-glow"></div>
+  <div class="upload-container">
+
+    <div class="upload-header">
+      <span class="logo">Cast<span>ify</span></span>
+      <p class="upload-tagline">Compliance training, reimagined for the African enterprise.</p>
+    </div>
+
+    <!-- PDF Upload -->
+    <div class="upload-section">
+      <span class="upload-label">Compliance Document</span>
+      <div class="upload-zone filled" id="pdf-zone" onclick="document.getElementById('pdf-input').click()">
+        <div class="upload-icon">📄</div>
+        <div class="upload-text-group">
+          <div class="upload-text-main" id="pdf-name">CBN_AML_Compliance_Manual_2024.pdf</div>
+          <div class="upload-text-sub">47 pages · Ready for processing</div>
+        </div>
+        <div class="upload-status">✓ Loaded</div>
+      </div>
+      <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="handlePDF(this)">
+    </div>
+
+    <!-- Employee Photo -->
+    <div class="upload-section">
+      <span class="upload-label">Training Host — Employee Photo</span>
+      <div class="upload-zone photo-zone filled" id="photo-zone" onclick="document.getElementById('photo-input').click()">
+        <img class="employee-preview" id="employee-preview" src="assets/employee.jpg" alt="Employee"
+          onerror="this.style.display='none'; document.getElementById('photo-ph').style.display='flex'">
+        <div class="employee-preview-placeholder" id="photo-ph" style="display:none">👤</div>
+        <div class="upload-text-group">
+          <div class="upload-text-main">Chidi Okafor, Head of Compliance</div>
+          <div class="upload-text-sub">Face and voice will be used as episode host</div>
+          <div class="upload-status" style="margin-top:6px">✓ Ready</div>
+        </div>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+    </div>
+
+    <!-- Voice Tone -->
+    <div class="upload-section">
+      <span class="upload-label">Voice Tone — Powered by YarnGPT</span>
+      <div class="voice-grid">
+        <div class="voice-pill selected" onclick="selectVoice(this)">
+          <div class="voice-pill-name">Professional</div>
+          <div class="voice-pill-desc">Authoritative and clear</div>
+          <div class="voice-pill-badge">YarnGPT</div>
+        </div>
+        <div class="voice-pill" onclick="selectVoice(this)">
+          <div class="voice-pill-name">Conversational</div>
+          <div class="voice-pill-desc">Warm and relatable</div>
+          <div class="voice-pill-badge">YarnGPT</div>
+        </div>
+        <div class="voice-pill" onclick="selectVoice(this)">
+          <div class="voice-pill-name">Authoritative</div>
+          <div class="voice-pill-desc">Firm and directive</div>
+          <div class="voice-pill-badge">YarnGPT</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-cta">
+      <button class="btn-primary" onclick="startPipeline()">Generate Training Series</button>
+      <div class="powered-by">Powered by Claude · YarnGPT · D-ID</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN 1: PIPELINE ==================== -->
+<div class="screen" id="screen-pipeline">
+  <div class="pipeline-glow"></div>
+  <div class="pipeline-container">
+    <div class="pipeline-header">
+      <span class="logo">Cast<span>ify</span></span>
+      <h1 class="pipeline-title">Building your series</h1>
+      <p class="pipeline-subtitle">Claude is reading your document and structuring episodes</p>
+    </div>
+    <div id="pipeline-steps"></div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN 2: EPISODES ==================== -->
+<div class="screen" id="screen-episodes">
+  <nav class="episodes-nav">
+    <span class="logo">Cast<span>ify</span></span>
+    <div class="nav-actions">
+      <button class="btn-ghost" onclick="openAnalytics()">📊 Compliance Dashboard</button>
+      <button class="btn-ghost" onclick="showScreen('screen-upload')">← New Series</button>
+    </div>
+  </nav>
+
+  <div class="episodes-hero">
+    <div class="series-tag">CBN AML TRAINING SERIES</div>
+    <h1 class="series-title">Anti-Money Laundering<br>Training 2024</h1>
+    <div class="series-meta">
+      <span>📋 3 Episodes</span>
+      <span>⏱ 18 min total</span>
+      <span>✦ Interactive Quizzes</span>
+      <span>🏆 Leaderboard</span>
+    </div>
+  </div>
+
+  <div class="episodes-section">
+    <div class="section-heading">Episodes</div>
+    <div class="episodes-rail">
+
+      <div class="episode-card" onclick="openPlayer()">
+        <div class="episode-thumb ep1-thumb">
+          <div class="episode-icon">🏦</div>
+          <div class="episode-number-bg">1</div>
+          <div class="play-overlay"><div class="play-btn-overlay">▶</div></div>
+        </div>
+        <div class="episode-body">
+          <div class="episode-num">Episode 01</div>
+          <div class="episode-title">What Is Money Laundering?</div>
+          <div class="episode-desc">Understand the crime, the CBN framework, and why it matters to your role.</div>
+          <div class="episode-footer">
+            <span class="episode-duration">⏱ 6 min</span>
+            <span class="episode-badge badge-new">WATCH NOW</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="episode-card">
+        <div class="episode-thumb ep2-thumb">
+          <div class="episode-icon">🔍</div>
+          <div class="episode-number-bg">2</div>
+          <div class="play-overlay"><div class="play-btn-overlay">▶</div></div>
+        </div>
+        <div class="episode-body">
+          <div class="episode-num">Episode 02</div>
+          <div class="episode-title">Red Flags on the Floor</div>
+          <div class="episode-desc">Real-world patterns and how to spot suspicious transactions before they complete.</div>
+          <div class="episode-footer">
+            <span class="episode-duration">⏱ 6 min</span>
+            <span class="episode-badge badge-locked">UNLOCKS AFTER EP 1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="episode-card">
+        <div class="episode-thumb ep3-thumb">
+          <div class="episode-icon">🛡️</div>
+          <div class="episode-number-bg">3</div>
+          <div class="play-overlay"><div class="play-btn-overlay">▶</div></div>
+        </div>
+        <div class="episode-body">
+          <div class="episode-num">Episode 03</div>
+          <div class="episode-title">What To Do When You Suspect Something</div>
+          <div class="episode-desc">Step-by-step reporting procedures and your legal protection as a reporter.</div>
+          <div class="episode-footer">
+            <span class="episode-duration">⏱ 6 min</span>
+            <span class="episode-badge badge-locked">UNLOCKS AFTER EP 2</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN 3: PLAYER ==================== -->
+<div class="screen" id="screen-player">
+  <div class="player-nav">
+    <button class="player-back" onclick="leavePlayer()">← Back to Episodes</button>
+    <span class="logo" style="font-size:20px">Cast<span>ify</span></span>
+    <div style="width:130px"></div>
+  </div>
+
+  <div class="player-wrapper">
+    <video id="castify-video" preload="metadata" playsinline>
+      <source src="assets/demo-video.mp4" type="video/mp4">
+    </video>
+
+    <div class="player-controls">
+      <div class="progress-bar-container" onclick="seekVideo(event)">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="controls-row">
+        <div class="controls-left">
+          <button class="ctrl-btn" id="play-pause-btn" onclick="togglePlay()">▶</button>
+          <span class="time-display" id="time-display">0:00 / 0:00</span>
+        </div>
+        <div class="ep-title-display">Episode 1: What Is Money Laundering?</div>
+        <button class="ctrl-btn" id="mute-btn" onclick="toggleMute()">🔊</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz-modal" id="quiz-modal">
+    <div class="quiz-card">
+
+      <div id="quiz-q-view">
+        <div class="quiz-header">
+          <div class="quiz-tag">Knowledge Check</div>
+          <div class="quiz-timer">
+            <svg class="timer-ring" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="17" fill="none" stroke="#222226" stroke-width="3"/>
+              <circle id="timer-arc" cx="20" cy="20" r="17" fill="none" stroke="#C8820E" stroke-width="3"
+                stroke-dasharray="107" stroke-dashoffset="0" stroke-linecap="round"
+                transform="rotate(-90 20 20)" style="transition: stroke-dashoffset 1s linear"/>
+            </svg>
+            <span class="timer-num" id="timer-count">28</span>
+          </div>
+        </div>
+
+        <div class="quiz-question">
+          Your customer makes three cash deposits of &#8358;490,000 each on the same day. What is this behaviour called?
+        </div>
+
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectAnswer(this, true)">Smurfing / Structuring</button>
+          <button class="quiz-option" onclick="selectAnswer(this, false)">Wire Fraud</button>
+          <button class="quiz-option" onclick="selectAnswer(this, false)">Phishing Attack</button>
+          <button class="quiz-option" onclick="selectAnswer(this, false)">Trade-based Laundering</button>
+        </div>
+      </div>
+
+      <div class="quiz-result" id="quiz-result">
+        <div class="result-icon" id="result-icon">🎯</div>
+        <div class="result-title" id="result-title">Correct!</div>
+        <div class="result-sub" id="result-sub">+100 points · You are on the leaderboard</div>
+        <button class="btn-primary" onclick="resumeVideo()">Continue Episode ▶</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ANALYTICS OVERLAY ==================== -->
+<div id="analytics-overlay">
+  <div class="analytics-panel">
+    <div class="analytics-header">
+      <h2 class="analytics-title">Compliance Dashboard</h2>
+      <button class="close-btn" onclick="closeAnalytics()">✕</button>
+    </div>
+
+    <div class="analytics-stats">
+      <div class="stat-card"><div class="stat-value">200</div><div class="stat-label">Total Staff</div></div>
+      <div class="stat-card"><div class="stat-value c-success">163</div><div class="stat-label">Completed</div></div>
+      <div class="stat-card"><div class="stat-value c-accent">24</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-card"><div class="stat-value c-danger">13</div><div class="stat-label">Not Started</div></div>
+    </div>
+
+    <div class="a-section-title">Staff Completion</div>
+    <table class="analytics-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>Department</th><th>Progress</th><th>Score</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Amaka Nwosu</td>
+          <td style="color:var(--text-muted)">Operations</td>
+          <td><div class="prog-cell"><div class="prog-track"><div class="prog-fill green" style="width:100%"></div></div><span class="prog-pct">100%</span></div></td>
+          <td style="color:var(--success);font-weight:600">94%</td>
+          <td><span class="status-badge s-complete">Complete</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Emeka Eze</td>
+          <td style="color:var(--text-muted)">Retail Banking</td>
+          <td><div class="prog-cell"><div class="prog-track"><div class="prog-fill" style="width:67%"></div></div><span class="prog-pct">67%</span></div></td>
+          <td style="color:var(--accent);font-weight:600">78%</td>
+          <td><span class="status-badge s-progress">In Progress</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Fatima Bello</td>
+          <td style="color:var(--text-muted)">Customer Service</td>
+          <td><div class="prog-cell"><div class="prog-track"><div class="prog-fill green" style="width:100%"></div></div><span class="prog-pct">100%</span></div></td>
+          <td style="color:var(--success);font-weight:600">88%</td>
+          <td><span class="status-badge s-complete">Complete</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Kunle Adeyemi</td>
+          <td style="color:var(--text-muted)">Risk Management</td>
+          <td><div class="prog-cell"><div class="prog-track"><div class="prog-fill" style="width:33%"></div></div><span class="prog-pct">33%</span></div></td>
+          <td style="color:var(--text-muted)">—</td>
+          <td><span class="status-badge s-progress">In Progress</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Ngozi Okonkwo</td>
+          <td style="color:var(--text-muted)">Compliance</td>
+          <td><div class="prog-cell"><div class="prog-track"><div class="prog-fill" style="width:0%"></div></div><span class="prog-pct">0%</span></div></td>
+          <td style="color:var(--text-muted)">—</td>
+          <td><span class="status-badge s-none">Not Started</span></td>
+          <td><button class="remind-btn" onclick="sendReminder(this)">Send Reminder</button></td>
+        </tr>
+        <tr>
+          <td>Seun Adesanya</td>
+          <td style="color:var(--text-muted)">Finance</td>
+          <td><div class="prog-cell"><div class="prog-track"><div class="prog-fill" style="width:0%"></div></div><span class="prog-pct">0%</span></div></td>
+          <td style="color:var(--text-muted)">—</td>
+          <td><span class="status-badge s-none">Not Started</span></td>
+          <td><button class="remind-btn" onclick="sendReminder(this)">Send Reminder</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="a-section-title" style="margin-top:8px">Episode Engagement</div>
+    <div class="chart-row">
+      <div class="chart-label">Ep 1: What Is Money Laundering?</div>
+      <div class="chart-track"><div class="chart-fill" style="width:87%"></div></div>
+      <div class="chart-val">87%</div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-label">Ep 2: Red Flags on the Floor</div>
+      <div class="chart-track"><div class="chart-fill" style="width:71%"></div></div>
+      <div class="chart-val">71%</div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-label">Ep 3: What To Do When You Suspect Something</div>
+      <div class="chart-track"><div class="chart-fill" style="width:54%"></div></div>
+      <div class="chart-val">54%</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // =============================================
+  // CONFIG — adjust QUIZ_TIME to match your video
+  // e.g. if you want the quiz at 45 seconds, set 45
+  // =============================================
+  const QUIZ_TIME = 20;
+
+  // ---- STATE ----
+  let quizShown = false;
+  let quizAnswered = false;
+  let timerInterval = null;
+  let timerCount = 28;
+
+  // ---- PIPELINE STEPS ----
+  const STEPS = [
+    { label: 'Uploading document',         detail: 'CBN_AML_Compliance_Manual_2024.pdf · 47 pages' },
+    { label: 'Parsing document content',   detail: 'Extracting text, structure and headings...' },
+    { label: 'Identifying frameworks',     detail: 'CBN, AML, NDPR, FIRS frameworks detected' },
+    { label: 'Structuring into episodes',  detail: 'Claude has outlined 3 episodes' },
+    { label: 'Writing Episode 1 script',   detail: 'What Is Money Laundering?' },
+    { label: 'Writing Episode 2 script',   detail: 'Red Flags on the Floor' },
+    { label: 'Writing Episode 3 script',   detail: 'What To Do When You Suspect Something' },
+    { label: 'Cloning voice profile',      detail: 'YarnGPT: Professional Nigerian tone selected' },
+    { label: 'Generating AI avatar',       detail: 'D-ID rendering Chidi Okafor...' },
+    { label: 'Series ready',               detail: 'Your 3-episode compliance series is live' },
+  ];
+
+  // ---- SCREEN MANAGEMENT ----
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ---- UPLOAD HANDLERS ----
+  function handlePDF(input) {
+    if (input.files[0]) {
+      document.getElementById('pdf-name').textContent = input.files[0].name;
+    }
+  }
+
+  function handlePhoto(input) {
+    if (input.files[0]) {
+      const url = URL.createObjectURL(input.files[0]);
+      const img = document.getElementById('employee-preview');
+      img.src = url;
+      img.style.display = 'block';
+      document.getElementById('photo-ph').style.display = 'none';
+    }
+  }
+
+  function selectVoice(el) {
+    document.querySelectorAll('.voice-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ---- PIPELINE ----
+  function startPipeline() {
+    showScreen('screen-pipeline');
+    buildPipelineDOM();
+    runStep(0);
+  }
+
+  function buildPipelineDOM() {
+    const container = document.getElementById('pipeline-steps');
+    container.innerHTML = '';
+    STEPS.forEach((step, i) => {
+      const isLast = i === STEPS.length - 1;
+      const el = document.createElement('div');
+      el.className = 'pipeline-step';
+      el.id = 'step-' + i;
+      el.innerHTML = `
+        <div class="step-track">
+          <div class="step-node" id="node-${i}">·</div>
+          ${!isLast ? `<div class="step-line" id="line-${i}"></div>` : ''}
+        </div>
+        <div class="step-content">
+          <div class="step-label" id="label-${i}">${step.label}</div>
+          <div class="step-detail" id="detail-${i}">${step.detail}</div>
+        </div>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  function runStep(i) {
+    if (i >= STEPS.length) {
+      setTimeout(() => showScreen('screen-episodes'), 700);
+      return;
+    }
+
+    const stepEl  = document.getElementById('step-' + i);
+    const nodeEl  = document.getElementById('node-' + i);
+    const labelEl = document.getElementById('label-' + i);
+    const detailEl= document.getElementById('detail-' + i);
+    const prevLine= i > 0 ? document.getElementById('line-' + (i - 1)) : null;
+
+    stepEl.classList.add('visible');
+
+    setTimeout(() => {
+      nodeEl.classList.add('active');
+      nodeEl.textContent = '◉';
+      labelEl.classList.add('active');
+      detailEl.classList.add('show');
+      if (prevLine) prevLine.classList.add('filled');
+    }, 100);
+
+    const hold = i === STEPS.length - 1 ? 1000 : 1050;
+
+    setTimeout(() => {
+      nodeEl.classList.remove('active');
+      nodeEl.classList.add('done');
+      nodeEl.textContent = '✓';
+      labelEl.classList.remove('active');
+      labelEl.classList.add('done');
+      runStep(i + 1);
+    }, hold);
+  }
+
+  // ---- VIDEO PLAYER ----
+  function openPlayer() {
+    showScreen('screen-player');
+    const video = document.getElementById('castify-video');
+    quizShown = false;
+    quizAnswered = false;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+    document.getElementById('play-pause-btn').textContent = '⏸';
+    video.addEventListener('timeupdate', onTimeUpdate);
+    video.addEventListener('ended', () => {
+      document.getElementById('play-pause-btn').textContent = '▶';
+    });
+  }
+
+  function leavePlayer() {
+    const video = document.getElementById('castify-video');
+    video.pause();
+    video.removeEventListener('timeupdate', onTimeUpdate);
+    showScreen('screen-episodes');
+  }
+
+  function onTimeUpdate() {
+    const video = document.getElementById('castify-video');
+    if (video.duration) {
+      document.getElementById('progress-fill').style.width = (video.currentTime / video.duration * 100) + '%';
+      document.getElementById('time-display').textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+    }
+    if (!quizShown && video.currentTime >= QUIZ_TIME) {
+      quizShown = true;
+      video.pause();
+      document.getElementById('play-pause-btn').textContent = '▶';
+      openQuiz();
+    }
+  }
+
+  function togglePlay() {
+    const video = document.getElementById('castify-video');
+    if (video.paused) {
+      video.play();
+      document.getElementById('play-pause-btn').textContent = '⏸';
+    } else {
+      video.pause();
+      document.getElementById('play-pause-btn').textContent = '▶';
+    }
+  }
+
+  function toggleMute() {
+    const video = document.getElementById('castify-video');
+    video.muted = !video.muted;
+    document.getElementById('mute-btn').textContent = video.muted ? '🔇' : '🔊';
+  }
+
+  function seekVideo(e) {
+    const video = document.getElementById('castify-video');
+    if (!video.duration) return;
+    const pct = e.offsetX / e.currentTarget.offsetWidth;
+    video.currentTime = pct * video.duration;
+  }
+
+  function fmt(s) {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  // ---- QUIZ ----
+  function openQuiz() {
+    document.getElementById('quiz-modal').classList.add('visible');
+    document.getElementById('quiz-q-view').style.display = 'block';
+    document.getElementById('quiz-result').classList.remove('show');
+    document.querySelectorAll('.quiz-option').forEach(o => {
+      o.classList.remove('correct', 'wrong');
+      o.disabled = false;
+    });
+    quizAnswered = false;
+    startTimer();
+  }
+
+  function startTimer() {
+    timerCount = 28;
+    updateArc(28);
+    document.getElementById('timer-count').textContent = 28;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timerCount--;
+      document.getElementById('timer-count').textContent = timerCount;
+      updateArc(timerCount);
+      if (timerCount <= 0) {
+        clearInterval(timerInterval);
+        showResult(false, true);
+      }
+    }, 1000);
+  }
+
+  function updateArc(count) {
+    const arc = document.getElementById('timer-arc');
+    const offset = 107 - (count / 28 * 107);
+    arc.style.strokeDashoffset = offset;
+    arc.style.stroke = count <= 8 ? '#F87171' : '#C8820E';
+  }
+
+  function selectAnswer(el, correct) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    clearInterval(timerInterval);
+    document.querySelectorAll('.quiz-option').forEach(o => { o.disabled = true; });
+    el.classList.add(correct ? 'correct' : 'wrong');
+    setTimeout(() => showResult(correct, false), 800);
+  }
+
+  function showResult(correct, timedOut) {
+    document.getElementById('quiz-q-view').style.display = 'none';
+    document.getElementById('quiz-result').classList.add('show');
+    if (timedOut) {
+      document.getElementById('result-icon').textContent = '⏰';
+      document.getElementById('result-title').textContent = "Time's Up";
+      document.getElementById('result-sub').textContent = 'Correct answer: Smurfing / Structuring';
+    } else if (correct) {
+      document.getElementById('result-icon').textContent = '🎯';
+      document.getElementById('result-title').textContent = 'Correct!';
+      document.getElementById('result-sub').textContent = '+100 points · You are on the leaderboard';
+    } else {
+      document.getElementById('result-icon').textContent = '📚';
+      document.getElementById('result-title').textContent = 'Not quite.';
+      document.getElementById('result-sub').textContent = 'Correct answer: Smurfing / Structuring';
+    }
+  }
+
+  function resumeVideo() {
+    document.getElementById('quiz-modal').classList.remove('visible');
+    const video = document.getElementById('castify-video');
+    video.play();
+    document.getElementById('play-pause-btn').textContent = '⏸';
+  }
+
+  // ---- ANALYTICS ----
+  function openAnalytics() {
+    document.getElementById('analytics-overlay').classList.add('visible');
+  }
+  function closeAnalytics() {
+    document.getElementById('analytics-overlay').classList.remove('visible');
+  }
+
+  // ---- REMINDER & TOAST ----
+  function sendReminder(btn) {
+    btn.textContent = '✓ Sent';
+    btn.classList.add('sent');
+    showToast('Reminder sent successfully');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✓ ' + msg;
+    t.classList.add('visible');
+    setTimeout(() => t.classList.remove('visible'), 3000);
+  }
+</script>
+</body>
+</html>
