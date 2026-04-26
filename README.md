@@ -124,7 +124,7 @@ castify/
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/YOUR_USERNAME/castify.git
+git clone https://github.com/david-iwuoha/castify-demo.git
 cd castify
 ```
 
