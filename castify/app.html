@@ -13,10 +13,10 @@
       --surface3:     #1A2338;
       --border:       #1E2A40;
       --border-light: #263347;
-      --accent:       #3D6FEF;
-      --accent-glow:  rgba(61,111,239,0.18);
-      --accent-dim:   rgba(61,111,239,0.07);
-      --accent-light: #5A87F5;
+      --accent:       #1A6B3A;
+      --accent-glow:  rgba(26,107,58,0.18);
+      --accent-dim:   rgba(26,107,58,0.07);
+      --accent-light: #22863F;
       --text:         #E8EDF7;
       --text-muted:   #5C6E8A;
       --text-dim:     #28344A;
@@ -195,7 +195,7 @@
     ===================================================== */
     #screen-pipeline { align-items: center; justify-content: center; padding: 60px 20px; position: relative; }
 
-    .pipeline-bg { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(61,111,239,0.06) 0%, transparent 70%); pointer-events: none; }
+    .pipeline-bg { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(26,107,58,0.06) 0%, transparent 70%); pointer-events: none; }
 
     .pipeline-container { width: 100%; max-width: 440px; position: relative; z-index: 1; }
 
@@ -229,7 +229,7 @@
 
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 0 4px var(--accent-glow), 0 0 18px var(--accent-glow); }
-      50%       { box-shadow: 0 0 0 8px rgba(61,111,239,0.08), 0 0 28px rgba(61,111,239,0.25); }
+      50%       { box-shadow: 0 0 0 8px rgba(26,107,58,0.08), 0 0 28px rgba(26,107,58,0.25); }
     }
 
     .step-line { width: 2px; height: 40px; background: var(--border); position: relative; overflow: hidden; }
@@ -305,6 +305,76 @@
     /* =====================================================
        SCREEN 3: PLAYER
     ===================================================== */
+    /* ---- VIDEO POPUP ---- */
+    .vid-popup-overlay {
+      position: fixed; inset: 0; z-index: 400;
+      background: rgba(0,0,0,0); pointer-events: none;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.4s ease;
+    }
+    .vid-popup-overlay.open {
+      background: rgba(0,0,0,0.82); pointer-events: all;
+    }
+
+    .vid-popup {
+      width: 72vw; max-width: 960px;
+      background: #000; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+      transform: scale(0.88) translateY(24px); opacity: 0;
+      transition: transform 0.42s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+      position: relative;
+    }
+    .vid-popup-overlay.open .vid-popup {
+      transform: scale(1) translateY(0); opacity: 1;
+    }
+    .vid-popup.fullscreen {
+      width: 100vw; max-width: 100vw; height: 100vh; border-radius: 0;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .vid-popup-topbar {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+      padding: 14px 18px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, transparent 100%);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .popup-close-btn {
+      background: rgba(255,255,255,0.12); border: none; color: #fff;
+      width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; transition: background 0.2s; backdrop-filter: blur(6px);
+    }
+    .popup-close-btn:hover { background: rgba(255,255,255,0.22); }
+    .popup-fs-btn {
+      background: rgba(255,255,255,0.12); border: none; color: #fff;
+      width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; transition: background 0.2s; backdrop-filter: blur(6px);
+    }
+    .popup-fs-btn:hover { background: rgba(255,255,255,0.22); }
+    .popup-ep-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+    .vid-popup video { width: 100%; display: block; max-height: 80vh; }
+    .vid-popup.fullscreen video { max-height: 100vh; }
+
+    .vid-popup-controls {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+      padding: 14px 18px 18px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, transparent 100%);
+    }
+    .popup-prog-track {
+      width: 100%; height: 3px; background: rgba(255,255,255,0.2);
+      border-radius: 2px; cursor: pointer; margin-bottom: 12px;
+      transition: height 0.15s;
+    }
+    .popup-prog-track:hover { height: 5px; }
+    .popup-prog-fill { height: 100%; background: var(--accent-light); border-radius: 2px; width: 0%; pointer-events: none; }
+    .popup-ctrl-row { display: flex; align-items: center; justify-content: space-between; }
+    .popup-ctrl-left { display: flex; align-items: center; gap: 12px; }
+    .popup-ctrl-btn { background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer; font-size: 18px; padding: 3px; transition: color 0.2s; }
+    .popup-ctrl-btn:hover { color: #fff; }
+    .popup-time { font-size: 12px; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
+
     #screen-player { background: #000; position: relative; }
 
     .player-top {
@@ -336,7 +406,7 @@
 
     /* ---- QUIZ MODAL ---- */
     .quiz-overlay {
-      position: fixed; inset: 0; z-index: 200;
+      position: fixed; inset: 0; z-index: 500;
       display: flex; align-items: flex-end; justify-content: center;
       background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
       opacity: 0; pointer-events: none; transition: opacity 0.3s;
@@ -716,37 +786,49 @@
 </div>
 
 <!-- =====================================================
-     SCREEN 3: PLAYER
+     VIDEO POPUP (sits above episodes screen)
 ===================================================== -->
-<div class="screen" id="screen-player">
-  <div class="player-top">
-    <button class="back-btn" onclick="leavePlayer()">← Back to Episodes</button>
-    <span class="logo" style="font-size:18px">Cast<span>ify</span></span>
-    <div style="width:120px"></div>
-  </div>
+<div class="vid-popup-overlay" id="vid-popup-overlay">
+  <div class="vid-popup" id="vid-popup">
 
-  <div class="player-wrap">
+    <!-- Top bar -->
+    <div class="vid-popup-topbar">
+      <button class="popup-close-btn" onclick="closePopupPlayer()" title="Close">✕</button>
+      <span class="popup-ep-label">Episode 1 — Our Culture and What We Stand For</span>
+      <button class="popup-fs-btn" id="fs-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+    </div>
+
+    <!-- Video -->
     <video id="demo-video" preload="metadata" playsinline>
       <source src="assets/demo-video.mp4" type="video/mp4">
     </video>
 
-    <div class="player-controls">
-      <div class="prog-track" onclick="seekVideo(event)">
-        <div class="prog-fill" id="prog-fill"></div>
+    <!-- Controls -->
+    <div class="vid-popup-controls">
+      <div class="popup-prog-track" id="popup-prog-track" onclick="seekVideo(event)">
+        <div class="popup-prog-fill" id="prog-fill"></div>
       </div>
-      <div class="ctrl-row">
-        <div class="ctrl-left">
-          <button class="ctrl-btn" id="pp-btn" onclick="togglePlay()">▶</button>
-          <span class="time-txt" id="time-txt">0:00 / 0:00</span>
+      <div class="popup-ctrl-row">
+        <div class="popup-ctrl-left">
+          <button class="popup-ctrl-btn" id="pp-btn" onclick="togglePlay()">▶</button>
+          <span class="popup-time" id="time-txt">0:00 / 0:00</span>
         </div>
-        <div class="ep-label-ctrl">Episode 1: Our Culture and What We Stand For</div>
-        <button class="ctrl-btn" id="mute-btn" onclick="toggleMute()">🔊</button>
+        <button class="popup-ctrl-btn" id="mute-btn" onclick="toggleMute()">🔊</button>
       </div>
     </div>
-  </div>
 
-  <!-- Quiz -->
-  <div class="quiz-overlay" id="quiz-overlay">
+  </div>
+</div>
+
+<!-- =====================================================
+     SCREEN 3: PLAYER (kept as fallback / quiz host)
+===================================================== -->
+<div class="screen" id="screen-player" style="display:none !important">
+  <!-- intentionally empty — player now lives in popup -->
+</div>
+
+<!-- Quiz (lives outside popup so it stacks on top) -->
+<div class="quiz-overlay" id="quiz-overlay">
     <div class="quiz-sheet">
 
       <div id="quiz-questions">
@@ -755,7 +837,7 @@
           <div class="timer-wrap">
             <svg class="timer-svg" viewBox="0 0 40 40">
               <circle cx="20" cy="20" r="16" fill="none" stroke="#1A2338" stroke-width="3"/>
-              <circle id="timer-arc" cx="20" cy="20" r="16" fill="none" stroke="#5A87F5" stroke-width="3"
+              <circle id="timer-arc" cx="20" cy="20" r="16" fill="none" stroke="#22863F" stroke-width="3"
                 stroke-dasharray="100.5" stroke-dashoffset="0" stroke-linecap="round"
                 transform="rotate(-90 20 20)" style="transition: stroke-dashoffset 1s linear"/>
             </svg>
@@ -887,7 +969,7 @@
   // CONFIG: set this to the second in your video
   // when you want the quiz to appear
   // =============================================
-  const QUIZ_TIME = 15;
+  const QUIZ_TIME = 20;
 
   let quizShown = false;
   let quizAnswered = false;
@@ -1002,23 +1084,49 @@
     }, hold);
   }
 
-  // ---- VIDEO PLAYER ----
+  // ---- VIDEO POPUP PLAYER ----
   function openPlayer() {
-    showScreen('screen-player');
+    const overlay = document.getElementById('vid-popup-overlay');
     const v = vid();
     quizShown = false; quizAnswered = false;
     v.currentTime = 0;
-    v.play().catch(() => {});
-    document.getElementById('pp-btn').textContent = '⏸';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      v.play().catch(() => {});
+      document.getElementById('pp-btn').textContent = '⏸';
+    }, 120);
     v.addEventListener('timeupdate', onTime);
     v.addEventListener('ended', () => document.getElementById('pp-btn').textContent = '▶');
   }
 
-  function leavePlayer() {
-    vid().pause();
-    vid().removeEventListener('timeupdate', onTime);
-    showScreen('screen-episodes');
+  function closePopupPlayer() {
+    const overlay = document.getElementById('vid-popup-overlay');
+    const popup = document.getElementById('vid-popup');
+    const v = vid();
+    v.pause();
+    v.removeEventListener('timeupdate', onTime);
+    overlay.classList.remove('open');
+    popup.classList.remove('fullscreen');
+    document.body.style.overflow = '';
+    document.getElementById('fs-btn').textContent = '⛶';
   }
+
+  function leavePlayer() { closePopupPlayer(); }
+
+  let isFullscreen = false;
+  function toggleFullscreen() {
+    const popup = document.getElementById('vid-popup');
+    const btn = document.getElementById('fs-btn');
+    isFullscreen = !isFullscreen;
+    popup.classList.toggle('fullscreen', isFullscreen);
+    btn.textContent = isFullscreen ? '⊡' : '⛶';
+  }
+
+  // close popup when clicking outside
+  document.getElementById('vid-popup-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closePopupPlayer();
+  });
 
   function vid() { return document.getElementById('demo-video'); }
 
@@ -1048,7 +1156,9 @@
 
   function seekVideo(e) {
     const v = vid(); if (!v.duration) return;
-    v.currentTime = (e.offsetX / e.currentTarget.offsetWidth) * v.duration;
+    const track = document.getElementById('popup-prog-track');
+    const rect = track.getBoundingClientRect();
+    v.currentTime = ((e.clientX - rect.left) / rect.width) * v.duration;
   }
 
   function fmt(s) {
@@ -1117,7 +1227,8 @@
 
   function resumeVideo() {
     document.getElementById('quiz-overlay').classList.remove('open');
-    vid().play(); document.getElementById('pp-btn').textContent = '⏸';
+    vid().play();
+    document.getElementById('pp-btn').textContent = '⏸';
   }
 
   // ---- ANALYTICS ----

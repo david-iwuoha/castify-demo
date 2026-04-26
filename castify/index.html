@@ -4,222 +4,246 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Castify — Corporate Training, Reimagined</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:       #060912;
-      --glass:    rgba(255,255,255,0.04);
-      --glass-b:  rgba(255,255,255,0.07);
-      --border:   rgba(255,255,255,0.07);
-      --border-b: rgba(255,255,255,0.12);
-      --accent:   #3D6FEF;
-      --accent2:  #5A87F5;
-      --teal:     #06B6D4;
-      --text:     #E8EDF7;
-      --text-m:   #7A8BA8;
-      --text-d:   #1E2A3A;
-      --success:  #10B981;
-      --danger:   #F87171;
+      --white:    #FFFFFF;
+      --off:      #F7F8F5;
+      --off2:     #EFF1EC;
+      --green:    #1A6B3A;
+      --green2:   #22863F;
+      --green-l:  #D6EFE0;
+      --green-xl: #F0FAF4;
+      --ink:      #0D1A0F;
+      --ink2:     #1E3322;
+      --muted:    #5A6E5F;
+      --muted2:   #8FA394;
+      --border:   #DDE5DF;
+      --border2:  #C8D5CB;
+      --danger:   #C0392B;
       --font: 'Plus Jakarta Sans', system-ui, sans-serif;
     }
+
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    html { scroll-behavior: smooth; }
-    body { background:var(--bg); color:var(--text); font-family:var(--font); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--white); color:var(--ink); font-family:var(--font); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
 
-    /* grain */
-    body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:9998; opacity:0.35;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E"); }
+    /* ---- NAV ---- */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:900;
+      height:62px; padding:0 60px;
+      background:rgba(255,255,255,0.94);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      transition:box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow:0 1px 20px rgba(13,26,15,0.08); }
+    .nav-logo { font-size:20px; font-weight:800; color:var(--ink); text-decoration:none; letter-spacing:-0.5px; }
+    .nav-logo span { color:var(--green); }
+    .nav-links { display:flex; gap:32px; list-style:none; }
+    .nav-links a { font-size:14px; font-weight:500; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--ink); }
+    .nav-right { display:flex; gap:10px; align-items:center; }
+    .btn-nav-g { font-size:13px; font-weight:600; color:var(--muted); background:none; border:1px solid var(--border2); padding:8px 16px; border-radius:7px; cursor:pointer; font-family:var(--font); text-decoration:none; transition:all 0.2s; }
+    .btn-nav-g:hover { color:var(--ink); border-color:var(--green); }
+    .btn-nav-p { font-size:13px; font-weight:700; color:#fff; background:var(--green); border:none; padding:8px 18px; border-radius:7px; cursor:pointer; font-family:var(--font); text-decoration:none; transition:all 0.2s; }
+    .btn-nav-p:hover { background:var(--green2); box-shadow:0 4px 16px rgba(26,107,58,0.28); }
 
-    /* orbs */
-    .orb { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
-    .orb1 { width:700px; height:700px; background:rgba(61,111,239,0.09); top:-250px; left:-150px; animation:drift1 20s ease-in-out infinite; }
-    .orb2 { width:600px; height:600px; background:rgba(6,182,212,0.06); bottom:-100px; right:-150px; animation:drift2 24s ease-in-out infinite; }
-    .orb3 { width:400px; height:400px; background:rgba(61,111,239,0.05); top:50%; left:50%; transform:translate(-50%,-50%); animation:drift3 18s ease-in-out infinite; }
-    @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(70px,90px)} }
-    @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,-70px)} }
-    @keyframes drift3 { 0%,100%{transform:translate(-50%,-50%)} 50%{transform:translate(-50%,-40%)} }
+    /* ---- HERO ---- */
+    .hero {
+      min-height:100vh; display:flex; align-items:center;
+      padding:100px 60px 80px;
+      background:var(--white);
+      position:relative; overflow:hidden;
+    }
 
-    /* glass util */
-    .glass { background:var(--glass); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid var(--border); }
+    /* subtle grid pattern */
+    .hero::before {
+      content:'';
+      position:absolute; inset:0; pointer-events:none;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size:48px 48px;
+      opacity:0.35;
+      mask-image:radial-gradient(ellipse 80% 80% at 60% 50%, transparent 30%, black 100%);
+      -webkit-mask-image:radial-gradient(ellipse 80% 80% at 60% 50%, transparent 30%, black 100%);
+    }
 
-    /* scroll reveal */
-    .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease,transform 0.7s ease; }
+    .hero-inner { max-width:1100px; margin:0 auto; width:100%; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; position:relative; z-index:1; }
+
+    .hero-left {}
+    .hero-tag { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--green); background:var(--green-xl); border:1px solid var(--green-l); padding:5px 12px; border-radius:100px; margin-bottom:28px; }
+    .h-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero-h1 { font-size:clamp(38px,4.5vw,64px); font-weight:800; line-height:1.06; letter-spacing:-2px; color:var(--ink); margin-bottom:24px; }
+    .hero-h1 em { font-style:normal; color:var(--green); }
+
+    .hero-sub { font-size:18px; color:var(--muted); line-height:1.75; margin-bottom:40px; max-width:480px; font-weight:400; }
+
+    .hero-btns { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:52px; }
+    .btn-h-p { padding:15px 30px; border-radius:8px; font-family:var(--font); font-size:15px; font-weight:700; cursor:pointer; background:var(--green); color:#fff; border:none; text-decoration:none; display:inline-block; transition:all 0.22s; }
+    .btn-h-p:hover { background:var(--green2); transform:translateY(-1px); box-shadow:0 8px 24px rgba(26,107,58,0.3); }
+    .btn-h-g { padding:14px 28px; border-radius:8px; font-family:var(--font); font-size:15px; font-weight:600; cursor:pointer; background:transparent; color:var(--ink); border:1px solid var(--border2); text-decoration:none; display:inline-block; transition:all 0.22s; }
+    .btn-h-g:hover { border-color:var(--green); color:var(--green); }
+
+    .hero-proof { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+    .proof-item { display:flex; align-items:center; gap:7px; font-size:13px; color:var(--muted); }
+    .proof-item::before { content:''; width:16px; height:16px; border-radius:50%; background:var(--green-l); border:1px solid var(--green); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .proof-check { color:var(--green); font-size:10px; font-weight:700; }
+
+    /* hero right — stat cards */
+    .hero-right { position:relative; }
+    .stat-stack { display:flex; flex-direction:column; gap:16px; }
+    .stat-box { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:22px 26px; box-shadow:0 2px 20px rgba(13,26,15,0.06); display:flex; align-items:center; gap:18px; transition:transform 0.3s; }
+    .stat-box:hover { transform:translateX(-4px); }
+    .stat-box:nth-child(2) { margin-left:24px; }
+    .stat-box:nth-child(3) { margin-left:48px; }
+    .stat-ico { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; background:var(--green-xl); }
+    .stat-text-val { font-size:24px; font-weight:800; color:var(--ink); letter-spacing:-0.5px; margin-bottom:2px; }
+    .stat-text-lbl { font-size:12px; color:var(--muted); font-weight:500; }
+
+    /* ---- LOGOS ---- */
+    .logos { background:var(--off); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:26px 0; overflow:hidden; }
+    .logos-lbl { text-align:center; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted2); margin-bottom:16px; }
+    .logos-track { display:flex; gap:60px; white-space:nowrap; animation:scrollL 24s linear infinite; }
+    .l-item { font-size:13px; font-weight:700; color:var(--border2); letter-spacing:0.5px; flex-shrink:0; }
+    @keyframes scrollL { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* ---- SHARED SECTION ---- */
+    .sec { padding:100px 60px; }
+    .si { max-width:1100px; margin:0 auto; }
+    .sec-eye { font-size:11px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--green); margin-bottom:12px; }
+    .sec-h { font-size:clamp(26px,3.5vw,46px); font-weight:800; line-height:1.1; letter-spacing:-1.5px; color:var(--ink); margin-bottom:16px; }
+    .sec-sub { font-size:17px; color:var(--muted); line-height:1.7; max-width:520px; }
+
+    /* ---- PROBLEM ---- */
+    .problem { background:var(--white); }
+    .prob-grid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; }
+    .prob-stats { margin-top:28px; display:flex; flex-direction:column; gap:12px; }
+    .prob-row { display:flex; align-items:flex-start; gap:14px; padding:16px 18px; border-radius:10px; background:var(--off); border:1px solid var(--border); }
+    .prob-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
+    .prob-body strong { display:block; font-size:22px; font-weight:800; color:var(--ink); margin-bottom:2px; }
+    .prob-body span { font-size:13px; color:var(--muted); }
+
+    .quote-box { background:var(--ink); border-radius:16px; padding:36px; position:relative; overflow:hidden; margin-bottom:20px; }
+    .quote-box::before { content:'"'; position:absolute; top:8px; left:20px; font-size:100px; line-height:1; color:rgba(255,255,255,0.06); font-family:Georgia,serif; pointer-events:none; }
+    .quote-t { font-size:18px; line-height:1.8; color:rgba(255,255,255,0.85); font-style:italic; position:relative; z-index:1; }
+    .quote-a { margin-top:18px; font-size:12px; color:rgba(255,255,255,0.4); font-weight:600; }
+    .outcome-box { background:var(--green-xl); border:1px solid var(--green-l); border-radius:12px; padding:20px 22px; display:flex; align-items:center; gap:14px; }
+    .outcome-ico { font-size:22px; }
+    .outcome-text { font-size:14px; color:var(--ink2); line-height:1.55; }
+    .outcome-text strong { display:block; font-weight:700; margin-bottom:2px; }
+
+    /* ---- VIDEO ---- */
+    .vid-sec { background:var(--off); }
+    .vid-header { margin-bottom:48px; }
+    .vid-wrap { border-radius:16px; overflow:hidden; border:1px solid var(--border); box-shadow:0 8px 40px rgba(13,26,15,0.1); }
+    .vid-wrap iframe { width:100%; aspect-ratio:16/9; display:block; border:none; }
+    .vid-cap { margin-top:16px; font-size:13px; color:var(--muted2); font-style:italic; }
+
+    /* ---- HOW ---- */
+    .how { background:var(--white); }
+    .how-header { margin-bottom:60px; }
+    .steps-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+    .step-item { background:var(--white); padding:36px 32px; position:relative; transition:background 0.2s; }
+    .step-item:hover { background:var(--green-xl); }
+    .step-num { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--green); margin-bottom:16px; }
+    .step-ico { font-size:28px; margin-bottom:16px; }
+    .step-h { font-size:17px; font-weight:700; color:var(--ink); margin-bottom:10px; letter-spacing:-0.2px; }
+    .step-p { font-size:14px; color:var(--muted); line-height:1.65; }
+    .step-arrow { position:absolute; top:50%; right:-1px; transform:translateY(-50%); width:24px; height:24px; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted2); }
+    .step-item:last-child .step-arrow { display:none; }
+
+    /* ---- FEATURES ---- */
+    .features { background:var(--off); }
+    .feat-header { margin-bottom:52px; }
+    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .feat-card { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:28px; transition:all 0.25s; }
+    .feat-card:hover { border-color:var(--green); box-shadow:0 4px 24px rgba(26,107,58,0.1); transform:translateY(-3px); }
+    .feat-ico { font-size:24px; margin-bottom:14px; }
+    .feat-h { font-size:15px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+    .feat-p { font-size:13px; color:var(--muted); line-height:1.65; }
+
+    /* ---- DASHBOARD ---- */
+    .dash-sec { background:var(--white); }
+    .dash-grid { display:grid; grid-template-columns:1fr 1.3fr; gap:64px; align-items:center; }
+    .dash-card { border:1px solid var(--border); border-radius:16px; padding:24px; background:var(--white); box-shadow:0 4px 32px rgba(13,26,15,0.08); }
+    .dash-top { display:flex; justify-content:space-between; margin-bottom:18px; }
+    .dash-title-s { font-size:13px; font-weight:700; color:var(--ink); }
+    .dash-date-s { font-size:11px; color:var(--muted2); }
+    .dash-stats-g { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:20px; }
+    .d-s { background:var(--off); border:1px solid var(--border); border-radius:8px; padding:12px; }
+    .d-s-val { font-size:20px; font-weight:800; color:var(--ink); margin-bottom:2px; }
+    .d-s-lbl { font-size:10px; color:var(--muted2); }
+    .d-bars-lbl { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted2); margin-bottom:12px; }
+    .d-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .d-bar-name { font-size:11px; color:var(--muted); width:72px; flex-shrink:0; }
+    .d-bar-track { flex:1; height:5px; background:var(--off2); border-radius:3px; overflow:hidden; }
+    .d-bar-fill { height:100%; border-radius:3px; background:var(--green); animation:barG 1.5s ease both; }
+    .d-bar-pct { font-size:11px; color:var(--ink); width:28px; text-align:right; font-weight:600; }
+    @keyframes barG { from{width:0!important} }
+
+    /* ---- VIDEO 2 ---- */
+    .vid2 { background:var(--off); padding-top:0; }
+
+    /* ---- CTA ---- */
+    .cta-sec { background:var(--ink); padding:100px 60px; }
+    .cta-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .cta-left {}
+    .cta-tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--green-l); background:rgba(214,239,224,0.1); border:1px solid rgba(214,239,224,0.2); padding:5px 12px; border-radius:100px; margin-bottom:20px; }
+    .cta-h { font-size:clamp(28px,4vw,52px); font-weight:800; letter-spacing:-2px; line-height:1.08; color:#fff; margin-bottom:18px; }
+    .cta-sub { font-size:17px; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:36px; }
+    .cta-btns { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn-cta-p { padding:15px 30px; border-radius:8px; font-size:15px; font-weight:700; background:var(--green); color:#fff; border:none; cursor:pointer; font-family:var(--font); text-decoration:none; display:inline-block; transition:all 0.22s; }
+    .btn-cta-p:hover { background:var(--green2); transform:translateY(-1px); box-shadow:0 8px 24px rgba(26,107,58,0.45); }
+    .btn-cta-g { padding:14px 28px; border-radius:8px; font-size:15px; font-weight:600; background:transparent; color:rgba(255,255,255,0.75); border:1px solid rgba(255,255,255,0.15); cursor:pointer; font-family:var(--font); text-decoration:none; display:inline-block; transition:all 0.22s; }
+    .btn-cta-g:hover { color:#fff; border-color:rgba(255,255,255,0.35); }
+    .cta-right-stats { display:flex; flex-direction:column; gap:20px; }
+    .cta-stat { border-top:1px solid rgba(255,255,255,0.1); padding-top:20px; }
+    .cta-stat-val { font-size:40px; font-weight:800; color:#fff; letter-spacing:-1.5px; margin-bottom:6px; }
+    .cta-stat-lbl { font-size:14px; color:rgba(255,255,255,0.45); }
+
+    /* ---- FOOTER ---- */
+    footer { background:var(--off); border-top:1px solid var(--border); padding:36px 60px; }
+    .foot-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .foot-logo { font-size:17px; font-weight:800; color:var(--ink); }
+    .foot-logo span { color:var(--green); }
+    .foot-copy { font-size:13px; color:var(--muted2); }
+    .foot-b { display:flex; gap:7px; align-items:center; font-size:12px; color:var(--muted2); }
+    .fb { padding:3px 8px; border-radius:5px; font-size:10px; font-weight:700; border:1px solid; }
+    .fb-c { background:rgba(107,59,245,0.07); color:#7B5EBF; border-color:rgba(107,59,245,0.2); }
+    .fb-y { background:rgba(200,80,30,0.07); color:#B85E30; border-color:rgba(200,80,30,0.2); }
+    .fb-d { background:rgba(0,140,180,0.07); color:#0878A0; border-color:rgba(0,140,180,0.2); }
+
+    /* ---- SCROLL REVEAL ---- */
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s ease, transform 0.65s ease; }
     .reveal.visible { opacity:1; transform:translateY(0); }
     .d1{transition-delay:0.1s} .d2{transition-delay:0.2s} .d3{transition-delay:0.3s} .d4{transition-delay:0.4s}
 
-    /* ---- NAV ---- */
-    nav { position:fixed; top:0; left:0; right:0; z-index:900; height:64px; padding:0 48px;
-      background:rgba(6,9,18,0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; transition:background 0.3s; }
-    .nav-logo { font-size:21px; font-weight:800; color:var(--text); text-decoration:none; letter-spacing:-0.5px; }
-    .nav-logo span { color:var(--accent2); }
-    .nav-links { display:flex; gap:36px; list-style:none; }
-    .nav-links a { font-size:14px; font-weight:500; color:var(--text-m); text-decoration:none; transition:color 0.2s; }
-    .nav-links a:hover { color:var(--text); }
-    .nav-right { display:flex; gap:10px; align-items:center; }
-    .btn-ghost-nav { font-size:13px; font-weight:600; color:var(--text-m); background:none; border:1px solid var(--border-b); padding:8px 16px; border-radius:8px; cursor:pointer; font-family:var(--font); text-decoration:none; transition:all 0.2s; }
-    .btn-ghost-nav:hover { color:var(--text); border-color:rgba(255,255,255,0.2); }
-    .btn-primary-nav { font-size:13px; font-weight:700; color:#fff; background:var(--accent); border:none; padding:8px 18px; border-radius:8px; cursor:pointer; font-family:var(--font); text-decoration:none; transition:all 0.2s; }
-    .btn-primary-nav:hover { background:var(--accent2); box-shadow:0 4px 20px rgba(61,111,239,0.35); }
-
-    /* ---- HERO ---- */
-    .hero { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:120px 48px 80px; text-align:center; }
-
-    .eyebrow-pill { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent2); padding:6px 14px; border-radius:100px; border:1px solid rgba(90,135,245,0.25); background:rgba(61,111,239,0.07); margin-bottom:24px; animation:fadeDown 0.8s ease both; }
-    .e-dot { width:6px; height:6px; border-radius:50%; background:var(--accent2); animation:blink 2s ease-in-out infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    .hero-h1 { font-size:clamp(40px,7.5vw,92px); font-weight:800; line-height:1.04; letter-spacing:-3px; margin-bottom:26px; animation:fadeUp 0.9s 0.1s ease both; }
-    .grad { background:linear-gradient(135deg,#fff 0%,var(--accent2) 45%,var(--teal) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-
-    .hero-sub { font-size:clamp(15px,2vw,19px); color:var(--text-m); max-width:580px; line-height:1.75; margin:0 auto 42px; animation:fadeUp 0.9s 0.2s ease both; }
-
-    .hero-btns { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:60px; animation:fadeUp 0.9s 0.3s ease both; }
-    .btn-hero { padding:16px 32px; border-radius:10px; font-family:var(--font); font-size:15px; font-weight:700; cursor:pointer; transition:all 0.25s; text-decoration:none; display:inline-block; border:none; }
-    .btn-hero-p { background:var(--accent); color:#fff; }
-    .btn-hero-p:hover { background:var(--accent2); transform:translateY(-2px); box-shadow:0 12px 32px rgba(61,111,239,0.42); }
-    .btn-hero-g { background:var(--glass); color:var(--text); border:1px solid var(--border-b); backdrop-filter:blur(10px); }
-    .btn-hero-g:hover { border-color:rgba(255,255,255,0.2); transform:translateY(-2px); }
-
-    .hero-pills { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; animation:fadeUp 0.9s 0.4s ease both; }
-    .hero-pill { padding:11px 20px; border-radius:100px; background:var(--glass); border:1px solid var(--border-b); backdrop-filter:blur(16px); display:flex; align-items:center; gap:9px; font-size:13px; }
-    .hero-pill strong { color:var(--text); font-weight:700; }
-    .hero-pill span { color:var(--text-m); }
-
-    .scroll-hint { position:absolute; bottom:32px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; animation:fadeIn 1s 1.4s ease both; }
-    .s-line { width:1px; height:44px; background:linear-gradient(180deg,var(--text-d),transparent); animation:scrollPulse 1.8s ease-in-out infinite; }
-    @keyframes scrollPulse { 0%{opacity:0;transform:scaleY(0);transform-origin:top} 50%{opacity:1;transform:scaleY(1)} 100%{opacity:0;transform-origin:bottom} }
-
-    /* ---- LOGOS ---- */
-    .logos-strip { position:relative; z-index:1; padding:28px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:rgba(255,255,255,0.012); overflow:hidden; }
-    .logos-label { text-align:center; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-d); margin-bottom:18px; }
-    .logos-track { display:flex; gap:64px; white-space:nowrap; animation:scrollL 22s linear infinite; }
-    .l-item { font-size:13px; font-weight:700; color:var(--text-d); letter-spacing:0.5px; flex-shrink:0; }
-    @keyframes scrollL { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-
-    /* ---- SECTIONS ---- */
-    section { position:relative; z-index:1; }
-    .si { max-width:1100px; margin:0 auto; padding:0 48px; }
-    .sec-eye { font-size:11px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--accent2); margin-bottom:12px; }
-    .sec-h { font-size:clamp(26px,4vw,48px); font-weight:800; line-height:1.1; letter-spacing:-1.5px; margin-bottom:16px; }
-    .sec-sub { font-size:17px; color:var(--text-m); line-height:1.7; max-width:540px; }
-
-    /* ---- PROBLEM ---- */
-    .problem { padding:120px 0; }
-    .problem-grid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
-    .prob-stats { display:flex; flex-direction:column; gap:14px; margin-top:28px; }
-    .prob-row { display:flex; align-items:center; gap:14px; padding:15px 18px; border-radius:12px; background:var(--glass); border:1px solid var(--border); backdrop-filter:blur(12px); }
-    .prob-icon { font-size:20px; flex-shrink:0; }
-    .prob-text { font-size:13px; color:var(--text-m); line-height:1.5; }
-    .prob-text strong { color:var(--text); display:block; font-size:22px; font-weight:800; margin-bottom:1px; }
-
-    .quote-card { padding:36px; border-radius:20px; background:var(--glass); border:1px solid var(--border-b); backdrop-filter:blur(20px); position:relative; }
-    .quote-card::before { content:'"'; position:absolute; top:12px; left:22px; font-size:90px; line-height:1; color:rgba(61,111,239,0.12); font-family:Georgia,serif; pointer-events:none; }
-    .quote-text { font-size:18px; line-height:1.8; color:var(--text); font-style:italic; font-weight:400; position:relative; z-index:1; }
-    .quote-attr { margin-top:18px; font-size:12px; color:var(--text-m); font-weight:600; }
-
-    /* ---- VIDEO ---- */
-    .vid-section { padding:80px 0 120px; }
-    .vid-header { text-align:center; margin-bottom:52px; }
-    .vid-header .sec-sub { margin:0 auto; }
-    .vid-wrap { position:relative; border-radius:20px; overflow:hidden; border:1px solid var(--border-b); box-shadow:0 40px 80px rgba(0,0,0,0.5); }
-    .vid-wrap::before { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg,rgba(6,9,18,0.12) 0%,transparent 15%,transparent 85%,rgba(6,9,18,0.18) 100%); }
-    .vid-wrap iframe { width:100%; aspect-ratio:16/9; display:block; border:none; }
-    .vid-caption { text-align:center; margin-top:18px; font-size:13px; color:var(--text-m); font-style:italic; }
-
-    /* ---- HOW IT WORKS ---- */
-    .how { padding:120px 0; }
-    .how-header { text-align:center; margin-bottom:68px; }
-    .how-header .sec-sub { margin:0 auto; }
-    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
-    .step-card { padding:32px; border-radius:20px; background:var(--glass); border:1px solid var(--border); backdrop-filter:blur(16px); position:relative; overflow:hidden; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-    .step-card:hover { border-color:rgba(61,111,239,0.3); transform:translateY(-5px); box-shadow:0 24px 48px rgba(0,0,0,0.3); }
-    .step-card::after { content:''; position:absolute; inset:0; border-radius:20px; background:linear-gradient(135deg,rgba(61,111,239,0.04) 0%,transparent 60%); pointer-events:none; }
-    .step-num { font-size:72px; font-weight:800; letter-spacing:-4px; color:var(--text-d); line-height:1; margin-bottom:20px; }
-    .step-badge { width:50px; height:50px; border-radius:14px; background:rgba(61,111,239,0.08); border:1px solid rgba(61,111,239,0.18); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:18px; }
-    .step-h { font-size:18px; font-weight:700; margin-bottom:10px; letter-spacing:-0.3px; }
-    .step-p { font-size:14px; color:var(--text-m); line-height:1.65; }
-
-    /* ---- FEATURES ---- */
-    .features { padding:80px 0 120px; }
-    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:52px; }
-    .feat-card { padding:28px; border-radius:18px; background:var(--glass); border:1px solid var(--border); backdrop-filter:blur(16px); position:relative; overflow:hidden; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-    .feat-card:hover { transform:translateY(-6px) scale(1.01); border-color:rgba(61,111,239,0.25); box-shadow:0 24px 48px rgba(0,0,0,0.3); }
-    .feat-glow { position:absolute; inset:0; border-radius:18px; background:radial-gradient(ellipse at top left,rgba(61,111,239,0.07) 0%,transparent 60%); pointer-events:none; opacity:0; transition:opacity 0.3s; }
-    .feat-card:hover .feat-glow { opacity:1; }
-    .feat-icon { font-size:26px; margin-bottom:14px; }
-    .feat-h { font-size:15px; font-weight:700; margin-bottom:8px; }
-    .feat-p { font-size:13px; color:var(--text-m); line-height:1.65; }
-
-    /* ---- DASHBOARD ---- */
-    .dash-section { padding:80px 0 120px; }
-    .dash-grid { display:grid; grid-template-columns:1fr 1.35fr; gap:60px; align-items:center; }
-    .dash-card { border-radius:20px; border:1px solid var(--border-b); background:var(--glass); backdrop-filter:blur(20px); padding:24px; box-shadow:0 32px 64px rgba(0,0,0,0.4); }
-    .dash-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
-    .dash-top-title { font-size:13px; font-weight:700; }
-    .dash-top-date { font-size:11px; color:var(--text-m); }
-    .dash-stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:20px; }
-    .d-stat { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:10px; padding:12px; }
-    .d-stat-val { font-size:20px; font-weight:800; margin-bottom:2px; }
-    .d-stat-lbl { font-size:10px; color:var(--text-m); }
-    .d-bar-sec { }
-    .d-bar-lbl-title { font-size:10px; color:var(--text-m); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
-    .d-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-    .d-bar-name { font-size:11px; color:var(--text-m); width:80px; flex-shrink:0; }
-    .d-bar-track { flex:1; height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
-    .d-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--accent),var(--teal)); animation:barG 1.5s ease both; }
-    .d-bar-pct { font-size:11px; color:var(--text); width:28px; text-align:right; }
-    @keyframes barG { from{width:0!important} }
-
-    /* ---- CTA ---- */
-    .cta { padding:120px 0; }
-    .cta-card { border-radius:28px; padding:80px; background:var(--glass); border:1px solid var(--border-b); backdrop-filter:blur(24px); text-align:center; position:relative; overflow:hidden; }
-    .cta-card::before { content:''; position:absolute; top:-50%; left:50%; transform:translateX(-50%); width:700px; height:700px; border-radius:50%; background:radial-gradient(circle,rgba(61,111,239,0.09) 0%,transparent 70%); pointer-events:none; }
-    .cta-eye { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent2); padding:5px 13px; border-radius:100px; border:1px solid rgba(90,135,245,0.25); background:rgba(61,111,239,0.07); margin-bottom:22px; }
-    .cta-h { font-size:clamp(30px,5vw,60px); font-weight:800; letter-spacing:-2px; line-height:1.1; margin-bottom:18px; }
-    .cta-sub { font-size:18px; color:var(--text-m); line-height:1.65; max-width:520px; margin:0 auto 38px; }
-    .cta-btns { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
-
-    /* ---- FOOTER ---- */
-    footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:44px 48px; background:rgba(0,0,0,0.25); }
-    .foot-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
-    .foot-logo { font-size:18px; font-weight:800; }
-    .foot-logo span { color:var(--accent2); }
-    .foot-copy { font-size:13px; color:var(--text-m); }
-    .foot-badges { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-m); }
-    .fb { padding:3px 8px; border-radius:6px; font-size:10px; font-weight:700; border:1px solid; }
-    .fb-c { background:rgba(107,59,245,0.1); color:#9B7EF5; border-color:rgba(107,59,245,0.2); }
-    .fb-y { background:rgba(255,107,53,0.1); color:#FF9A6B; border-color:rgba(255,107,53,0.2); }
-    .fb-d { background:rgba(0,180,216,0.1); color:#4DD8F0; border-color:rgba(0,180,216,0.2); }
-
-    /* ---- ANIMATIONS ---- */
-    @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
     /* ---- MOBILE ---- */
-    @media(max-width:860px){
+    @media(max-width:900px){
       nav { padding:0 20px; }
       .nav-links { display:none; }
-      .hero { padding:100px 24px 60px; }
-      .hero-h1 { letter-spacing:-1.5px; }
-      .si { padding:0 24px; }
-      .problem-grid { grid-template-columns:1fr; gap:40px; }
-      .steps { grid-template-columns:1fr; }
-      .feat-grid { grid-template-columns:1fr; }
+      .hero { padding:90px 24px 60px; }
+      .hero-inner { grid-template-columns:1fr; gap:40px; }
+      .hero-right { display:none; }
+      .sec { padding:72px 24px; }
+      .prob-grid { grid-template-columns:1fr; gap:36px; }
+      .steps-row { grid-template-columns:1fr; }
+      .step-arrow { display:none; }
+      .feat-grid { grid-template-columns:1fr 1fr; }
       .dash-grid { grid-template-columns:1fr; }
-      .dash-stats-row { grid-template-columns:1fr 1fr; }
-      .cta-card { padding:48px 24px; }
-      footer { padding:32px 24px; }
-      .foot-inner { flex-direction:column; align-items:flex-start; gap:14px; }
+      .cta-sec { padding:72px 24px; }
+      .cta-inner { grid-template-columns:1fr; gap:48px; }
+      footer { padding:28px 24px; }
+      .foot-inner { flex-direction:column; align-items:flex-start; }
     }
   </style>
 </head>
 <body>
-
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
 
 <!-- NAV -->
 <nav id="navbar">
@@ -231,31 +255,59 @@
     <li><a href="#demo">Demo</a></li>
   </ul>
   <div class="nav-right">
-    <a href="#" class="btn-ghost-nav">Log In</a>
-    <a href="app.html" class="btn-primary-nav">Launch App →</a>
+    <a href="#" class="btn-nav-g">Log In</a>
+    <a href="app.html" class="btn-nav-p">Launch App →</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="eyebrow-pill"><span class="e-dot"></span>Built for the Claude AI Hackathon 2025</div>
-  <h1 class="hero-h1">Corporate Training<br><span class="grad">Employees Actually Watch</span></h1>
-  <p class="hero-sub">Upload any compliance or onboarding document. Castify converts it into Netflix-style interactive episodes — hosted by your own employees, in their own voice and likeness.</p>
-  <div class="hero-btns">
-    <a href="app.html" class="btn-hero btn-hero-p">Generate Your First Series →</a>
-    <a href="#demo" class="btn-hero btn-hero-g">▶ &nbsp;Watch Demo</a>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-tag"><span class="h-dot"></span>Claude AI Hackathon 2025</div>
+      <h1 class="hero-h1">Corporate training<br>employees actually<br><em>finish.</em></h1>
+      <p class="hero-sub">Upload any compliance or onboarding document. Castify turns it into Netflix-style interactive video episodes — hosted by your own employees, in their own voice.</p>
+      <div class="hero-btns">
+        <a href="app.html" class="btn-h-p">Generate Your First Series →</a>
+        <a href="#demo" class="btn-h-g">▶ Watch Demo</a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-item"><span class="proof-check">✓</span> No cameras or studios</div>
+        <div class="proof-item"><span class="proof-check">✓</span> Full audit trail</div>
+        <div class="proof-item"><span class="proof-check">✓</span> Ready in minutes</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-stack">
+        <div class="stat-box">
+          <div class="stat-ico">📈</div>
+          <div>
+            <div class="stat-text-val">3× higher</div>
+            <div class="stat-text-lbl">Training completion rate vs PDF</div>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-ico">⚡</div>
+          <div>
+            <div class="stat-text-val">&lt; 10 mins</div>
+            <div class="stat-text-lbl">From document upload to live series</div>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-ico">🛡️</div>
+          <div>
+            <div class="stat-text-val">Full evidence</div>
+            <div class="stat-text-lbl">Audit-ready compliance proof per employee</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="hero-pills">
-    <div class="hero-pill"><span>🏆</span><strong>3×</strong><span>higher completion rates</span></div>
-    <div class="hero-pill"><span>⚡</span><strong>Minutes</strong><span>to generate a series</span></div>
-    <div class="hero-pill"><span>📋</span><strong>Full audit trail</strong><span>for regulators</span></div>
-  </div>
-  <div class="scroll-hint"><div class="s-line"></div></div>
 </section>
 
 <!-- LOGOS -->
-<div class="logos-strip">
-  <p class="logos-label">Trusted across regulated industries</p>
+<div class="logos">
+  <p class="logos-lbl">Designed for regulated industries across Africa</p>
   <div style="overflow:hidden">
     <div class="logos-track">
       <span class="l-item">ZENITH BANK</span><span class="l-item">GTBank</span><span class="l-item">ACCESS BANK</span>
@@ -269,23 +321,27 @@
 </div>
 
 <!-- PROBLEM -->
-<section class="problem">
+<section class="sec problem">
   <div class="si">
-    <div class="problem-grid">
+    <div class="prob-grid">
       <div>
         <p class="sec-eye reveal">The Problem</p>
         <h2 class="sec-h reveal d1">Three people read<br>the 47-page PDF.</h2>
-        <p class="sec-sub reveal d2">Every Monday, compliance officers send documents. Every Friday, employees sign without reading. Six weeks later, a preventable mistake costs the company millions. This is not a Nigeria problem. This is everywhere.</p>
+        <p class="sec-sub reveal d2">Every Monday, compliance officers send documents. Every Friday, employees sign without reading. Six weeks later, a preventable mistake costs the company millions.</p>
         <div class="prob-stats">
-          <div class="prob-row reveal d2"><div class="prob-icon">📉</div><div class="prob-text"><strong>6%</strong>of employees actually read compliance documents sent by email</div></div>
-          <div class="prob-row reveal d3"><div class="prob-icon">💸</div><div class="prob-text"><strong>₦500M+</strong>average CBN fine for compliance failures attributable to staff negligence</div></div>
-          <div class="prob-row reveal d4"><div class="prob-icon">⏱</div><div class="prob-text"><strong>14 hrs</strong>wasted per year per employee chasing document acknowledgements</div></div>
+          <div class="prob-row reveal d2"><div class="prob-icon">📉</div><div class="prob-body"><strong>6%</strong><span>of employees actually read compliance documents sent by email</span></div></div>
+          <div class="prob-row reveal d3"><div class="prob-icon">💸</div><div class="prob-body"><strong>₦500M+</strong><span>average CBN fine for staff-attributable compliance failures</span></div></div>
+          <div class="prob-row reveal d4"><div class="prob-icon">⏱</div><div class="prob-body"><strong>14 hrs</strong><span>wasted per year per employee chasing acknowledgements</span></div></div>
         </div>
       </div>
       <div class="reveal d2">
-        <div class="quote-card">
-          <p class="quote-text">Please read and sign the acknowledgement form by Friday. Attached is the updated AML compliance manual — 47 pages.</p>
-          <p class="quote-attr">— A real email sent at 200 Nigerian companies every Monday morning</p>
+        <div class="quote-box">
+          <p class="quote-t">Please read and sign the acknowledgement form by Friday. Attached is the updated AML compliance manual — 47 pages.</p>
+          <p class="quote-a">— A real email sent at 200 Nigerian companies every Monday morning</p>
+        </div>
+        <div class="outcome-box">
+          <div class="outcome-ico">✅</div>
+          <div class="outcome-text"><strong>With Castify</strong>91% of employees complete Episode 1 on the day it is assigned. Quiz scores are tracked. Evidence is ready for regulators.</div>
         </div>
       </div>
     </div>
@@ -293,125 +349,138 @@
 </section>
 
 <!-- VIDEO 1 -->
-<section class="vid-section" id="demo">
+<section class="sec vid-sec" id="demo">
   <div class="si">
     <div class="vid-header reveal">
-      <p class="sec-eye" style="text-align:center">What Castify Produces</p>
-      <h2 class="sec-h" style="text-align:center">AI avatars. Real voices.<br>Your employees as the stars.</h2>
+      <p class="sec-eye">What Castify Produces</p>
+      <h2 class="sec-h">AI avatars. Real voices.<br>Your employees as the stars.</h2>
       <p class="sec-sub">The document-to-video pipeline already works at this quality. Castify automates the entire process from a single upload.</p>
     </div>
     <div class="vid-wrap reveal d1">
       <iframe src="https://www.youtube-nocookie.com/embed/8O-3-2dqPNI?rel=0&modestbranding=1&color=white"
         title="AI Avatar Video Demo" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
-    <p class="vid-caption reveal">AI-generated training video using the same avatar pipeline Castify automates from your document upload.</p>
+    <p class="vid-cap reveal">AI-generated training video using the same avatar pipeline Castify automates from your document upload.</p>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section class="how" id="how">
+<section class="sec how" id="how">
   <div class="si">
     <div class="how-header">
       <p class="sec-eye reveal">The Process</p>
-      <h2 class="sec-h reveal d1">From document to series<br>in three steps.</h2>
-      <p class="sec-sub reveal d2">No cameras. No studio. No scheduling. Just your document, a headshot, and ten minutes.</p>
+      <h2 class="sec-h reveal d1">From document to series in three steps.</h2>
+      <p class="sec-sub reveal d2">No cameras. No studio. No scheduling.</p>
     </div>
-    <div class="steps">
-      <div class="step-card reveal">
-        <div class="step-num">01</div>
-        <div class="step-badge">📄</div>
+    <div class="steps-row reveal d1">
+      <div class="step-item">
+        <div class="step-num">Step 01</div>
+        <div class="step-ico">📄</div>
         <h3 class="step-h">Upload Your Document</h3>
-        <p class="step-p">Drop in any PDF — a CBN manual, an onboarding guide, a code of conduct. Claude reads every page and understands the structure, not just the keywords.</p>
+        <p class="step-p">Drop in any PDF — a CBN manual, onboarding guide, or code of conduct. Claude reads every page and understands the structure, not just keywords.</p>
+        <div class="step-arrow">›</div>
       </div>
-      <div class="step-card reveal d1">
-        <div class="step-num">02</div>
-        <div class="step-badge">🧠</div>
-        <h3 class="step-h">Claude Structures and Scripts</h3>
-        <p class="step-p">Claude identifies key learning objectives and divides content into focused episodes. It writes the script, generates quiz questions with timestamps — all automatically.</p>
+      <div class="step-item">
+        <div class="step-num">Step 02</div>
+        <div class="step-ico">🧠</div>
+        <h3 class="step-h">Claude Scripts Everything</h3>
+        <p class="step-p">Claude structures the content into focused episodes, writes the scripts, generates quiz questions with timestamps — automatically.</p>
+        <div class="step-arrow">›</div>
       </div>
-      <div class="step-card reveal d2">
-        <div class="step-num">03</div>
-        <div class="step-badge">🎬</div>
+      <div class="step-item">
+        <div class="step-num">Step 03</div>
+        <div class="step-ico">🎬</div>
         <h3 class="step-h">Your Employees Go Live</h3>
-        <p class="step-p">YarnGPT clones the voice. D-ID renders the AI avatar from a headshot. The result is a Netflix-style episode that feels like your company made it — because it did.</p>
+        <p class="step-p">YarnGPT clones the voice. D-ID renders the avatar. The result is a Netflix-style episode that feels like your company made it — because it did.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FEATURES -->
-<section class="features" id="features">
+<section class="sec features" id="features">
   <div class="si">
-    <p class="sec-eye reveal">Platform Features</p>
-    <h2 class="sec-h reveal d1">Everything a compliance officer<br>actually needs.</h2>
+    <div class="feat-header">
+      <p class="sec-eye reveal">Platform Features</p>
+      <h2 class="sec-h reveal d1">Everything compliance officers actually need.</h2>
+    </div>
     <div class="feat-grid">
-      <div class="feat-card reveal"><div class="feat-glow"></div><div class="feat-icon">📺</div><h3 class="feat-h">Netflix-style Episode Rail</h3><p class="feat-p">Employees browse training like a streaming platform. Progress, completion and scores tracked automatically per person.</p></div>
-      <div class="feat-card reveal d1"><div class="feat-glow"></div><div class="feat-icon">🎯</div><h3 class="feat-h">Mid-episode Quiz Interruptions</h3><p class="feat-p">The video pauses at strategic moments. A quiz slides in. A 28-second timer starts. Points are awarded. The leaderboard updates in real time.</p></div>
-      <div class="feat-card reveal d2"><div class="feat-glow"></div><div class="feat-icon">🏆</div><h3 class="feat-h">Leaderboard and Scoring</h3><p class="feat-p">Compliance becomes competitive. Employees check their rankings. Departments compete. Engagement numbers you will not believe.</p></div>
-      <div class="feat-card reveal d1"><div class="feat-glow"></div><div class="feat-icon">📊</div><h3 class="feat-h">Full Analytics Dashboard</h3><p class="feat-p">Know exactly who watched, who passed, who skipped, and which episodes have the highest drop-off rate — so you can improve content.</p></div>
-      <div class="feat-card reveal d2"><div class="feat-glow"></div><div class="feat-icon">🔔</div><h3 class="feat-h">Automated Reminders</h3><p class="feat-p">Castify chases employees so you do not have to. Nudges go out automatically to anyone who has not started before the deadline.</p></div>
-      <div class="feat-card reveal d3"><div class="feat-glow"></div><div class="feat-icon">🔒</div><h3 class="feat-h">Private Studio Isolation</h3><p class="feat-p">Your content lives in your private workspace only. A GTBank episode will never appear in an Access Bank account. Ever.</p></div>
+      <div class="feat-card reveal"><div class="feat-ico">📺</div><h3 class="feat-h">Netflix-style Episode Rail</h3><p class="feat-p">Employees browse training like a streaming platform. Progress, completion and scores tracked per person automatically.</p></div>
+      <div class="feat-card reveal d1"><div class="feat-ico">🎯</div><h3 class="feat-h">Mid-episode Quiz Interruptions</h3><p class="feat-p">The video pauses at key moments. A quiz slides in. A timer starts. Points are awarded and the leaderboard updates.</p></div>
+      <div class="feat-card reveal d2"><div class="feat-ico">🏆</div><h3 class="feat-h">Leaderboard and Scoring</h3><p class="feat-p">Compliance becomes competitive. Employees check their rankings. Departments compete. Engagement you will not believe.</p></div>
+      <div class="feat-card reveal d1"><div class="feat-ico">📊</div><h3 class="feat-h">Full Analytics Dashboard</h3><p class="feat-p">Know exactly who watched, who passed, who skipped, and which episodes have the highest drop-off so you can improve them.</p></div>
+      <div class="feat-card reveal d2"><div class="feat-ico">🔔</div><h3 class="feat-h">Automated Reminders</h3><p class="feat-p">Castify chases employees so you do not have to. Nudges go out automatically before every deadline.</p></div>
+      <div class="feat-card reveal d3"><div class="feat-ico">🔒</div><h3 class="feat-h">Private Studio Isolation</h3><p class="feat-p">Your content lives in your workspace only. A GTBank episode will never appear in an Access Bank account. Ever.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ANALYTICS PREVIEW -->
-<section class="dash-section" id="analytics">
+<!-- DASHBOARD -->
+<section class="sec dash-sec" id="analytics">
   <div class="si">
     <div class="dash-grid">
       <div>
         <p class="sec-eye reveal">Compliance Evidence</p>
-        <h2 class="sec-h reveal d1">Walk into any audit<br>with real proof.</h2>
-        <p class="sec-sub reveal d2">Not a signature on a form. Proof that each employee watched, engaged with quiz questions, and demonstrated understanding. Regulators have never seen anything like it.</p>
+        <h2 class="sec-h reveal d1">Walk into any audit with real proof.</h2>
+        <p class="sec-sub reveal d2">Not a signature on a form. Proof that each employee watched, engaged, answered correctly, and demonstrated understanding. Regulators have never seen anything like it.</p>
       </div>
       <div class="dash-card reveal d1">
-        <div class="dash-top">
-          <span class="dash-top-title">Onboarding Dashboard</span>
-          <span class="dash-top-date">April 2026</span>
+        <div class="dash-top"><span class="dash-title-s">Onboarding Dashboard</span><span class="dash-date-s">April 2026</span></div>
+        <div class="dash-stats-g">
+          <div class="d-s"><div class="d-s-val">200</div><div class="d-s-lbl">Total Staff</div></div>
+          <div class="d-s"><div class="d-s-val" style="color:#1A6B3A">163</div><div class="d-s-lbl">Completed</div></div>
+          <div class="d-s"><div class="d-s-val" style="color:#B87A00">24</div><div class="d-s-lbl">In Progress</div></div>
+          <div class="d-s"><div class="d-s-val" style="color:#C0392B">13</div><div class="d-s-lbl">Not Started</div></div>
         </div>
-        <div class="dash-stats-row">
-          <div class="d-stat"><div class="d-stat-val">200</div><div class="d-stat-lbl">Total Staff</div></div>
-          <div class="d-stat"><div class="d-stat-val" style="color:var(--success)">163</div><div class="d-stat-lbl">Completed</div></div>
-          <div class="d-stat"><div class="d-stat-val" style="color:var(--accent2)">24</div><div class="d-stat-lbl">In Progress</div></div>
-          <div class="d-stat"><div class="d-stat-val" style="color:var(--danger)">13</div><div class="d-stat-lbl">Not Started</div></div>
-        </div>
-        <div class="d-bar-sec">
-          <div class="d-bar-lbl-title">Episode Engagement</div>
-          <div class="d-bar-row"><div class="d-bar-name">Episode 1</div><div class="d-bar-track"><div class="d-bar-fill" style="width:91%"></div></div><div class="d-bar-pct">91%</div></div>
-          <div class="d-bar-row"><div class="d-bar-name">Episode 2</div><div class="d-bar-track"><div class="d-bar-fill" style="width:74%"></div></div><div class="d-bar-pct">74%</div></div>
-          <div class="d-bar-row"><div class="d-bar-name">Episode 3</div><div class="d-bar-track"><div class="d-bar-fill" style="width:58%"></div></div><div class="d-bar-pct">58%</div></div>
-        </div>
+        <div class="d-bars-lbl">Episode Engagement</div>
+        <div class="d-bar-row"><div class="d-bar-name">Episode 1</div><div class="d-bar-track"><div class="d-bar-fill" style="width:91%"></div></div><div class="d-bar-pct">91%</div></div>
+        <div class="d-bar-row"><div class="d-bar-name">Episode 2</div><div class="d-bar-track"><div class="d-bar-fill" style="width:74%"></div></div><div class="d-bar-pct">74%</div></div>
+        <div class="d-bar-row"><div class="d-bar-name">Episode 3</div><div class="d-bar-track"><div class="d-bar-fill" style="width:58%"></div></div><div class="d-bar-pct">58%</div></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- VIDEO 2 -->
-<section class="vid-section" style="padding-top:0">
+<section class="sec vid2">
   <div class="si">
     <div class="vid-header reveal">
-      <p class="sec-eye" style="text-align:center">The AI Pipeline</p>
-      <h2 class="sec-h" style="text-align:center">Text in. Professional video out.<br>In minutes.</h2>
-      <p class="sec-sub">This is the future of corporate communication. Castify brings it to your HR and compliance teams — no technical skills required.</p>
+      <p class="sec-eye">The AI Pipeline</p>
+      <h2 class="sec-h">Text in. Professional video out. In minutes.</h2>
+      <p class="sec-sub">This is the future of corporate communication. Castify brings it to your HR team — no technical skills required.</p>
     </div>
     <div class="vid-wrap reveal d1">
       <iframe src="https://www.youtube-nocookie.com/embed/GJsY-wrLh9s?rel=0&modestbranding=1&color=white&start=30"
-        title="AI Video Generation Full Tutorial" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        title="AI Video Pipeline Tutorial" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
-    <p class="vid-caption reveal">The full AI video generation pipeline — Castify automates this entire process from your document upload.</p>
+    <p class="vid-cap reveal">Castify automates this entire pipeline — from document upload to finished episode — in one flow.</p>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="cta">
-  <div class="si">
-    <div class="cta-card reveal">
-      <div class="cta-eye">Ready to transform your training?</div>
+<section class="cta-sec">
+  <div class="cta-inner">
+    <div class="cta-left reveal">
+      <div class="cta-tag">Ready to get started?</div>
       <h2 class="cta-h">Stop sending PDFs.<br>Start making episodes.</h2>
-      <p class="cta-sub">Join the companies using Castify to turn compliance from a checkbox into a competitive advantage.</p>
+      <p class="cta-sub">Turn your compliance manuals and onboarding guides into training your employees will actually remember.</p>
       <div class="cta-btns">
-        <a href="app.html" class="btn-hero btn-hero-p">Launch Castify Demo →</a>
-        <a href="#demo" class="btn-hero btn-hero-g">Watch How It Works</a>
+        <a href="app.html" class="btn-cta-p">Launch Castify Demo →</a>
+        <a href="#demo" class="btn-cta-g">Watch How It Works</a>
+      </div>
+    </div>
+    <div class="cta-right-stats reveal d2">
+      <div class="cta-stat">
+        <div class="cta-stat-val">91%</div>
+        <div class="cta-stat-lbl">Episode 1 completion rate on day of assignment</div>
+      </div>
+      <div class="cta-stat">
+        <div class="cta-stat-val">3×</div>
+        <div class="cta-stat-lbl">Higher retention compared to document-based training</div>
+      </div>
+      <div class="cta-stat">
+        <div class="cta-stat-val">Zero</div>
+        <div class="cta-stat-lbl">Technical skills required to generate a full series</div>
       </div>
     </div>
   </div>
@@ -422,26 +491,18 @@
   <div class="foot-inner">
     <span class="foot-logo">Cast<span>ify</span></span>
     <span class="foot-copy">© 2025 Castify. Built for the Claude AI Hackathon.</span>
-    <div class="foot-badges">
-      Powered by
-      <span class="fb fb-c">Claude</span>
-      <span class="fb fb-y">YarnGPT</span>
-      <span class="fb fb-d">D-ID</span>
-    </div>
+    <div class="foot-b">Powered by <span class="fb fb-c">Claude</span><span class="fb fb-y">YarnGPT</span><span class="fb fb-d">D-ID</span></div>
   </div>
 </footer>
 
 <script>
-  // Scroll reveal
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // Navbar darken on scroll
   window.addEventListener('scroll', () => {
-    document.getElementById('navbar').style.background =
-      window.scrollY > 50 ? 'rgba(6,9,18,0.96)' : 'rgba(6,9,18,0.75)';
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
   });
 </script>
 </body>
