@@ -69,7 +69,7 @@ Six weeks later, a junior staff member makes a textbook error that the manual ex
 | 🔒 **Private Studio** | Company content is never shared — each organisation lives in its own private workspace |
 
 ---
-
+ 
 ## 🎬 How It Works
 
 ### Step 1 — Upload
