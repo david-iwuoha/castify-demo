@@ -94,7 +94,7 @@ For the first time, she can walk into a regulatory audit with proof — not just
 
 ---
 
-## 🏗️ Tech Stack
+## 🏗️ Tech Stack 
 
 ```
 Frontend        →  Vanilla HTML5 / CSS3 / JavaScript (zero dependencies)
